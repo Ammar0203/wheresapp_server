@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 const mongoose = require('mongoose')
+const User = require('./models/user')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -23,9 +24,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// app.use('/', indexRouter);
+// app.use('/users', usersRouter);
+
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/account', require('./routes/account'));
 
 app.use((err, req, res, next) => {
   if(req.get('accept').includes('json')) {

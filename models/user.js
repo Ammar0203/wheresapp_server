@@ -20,7 +20,8 @@ const ModelSchema = new mongoose.Schema({
     },
     about: {
         type: String,
-        maxlength: 100
+        maxlength: 100,
+        default: 'أهلًا، أنا أستعمل محادثة حسوب'
     },
     avatar: {
         type: String
@@ -31,7 +32,7 @@ const ModelSchema = new mongoose.Schema({
 })
 
 ModelSchema.pre('save', function(next) {
-    if(this.isNew || this.isModified('Password')) {
+    if(this.isNew || this.isModified('password')) {
         this.password = bcrypt.hashSync(this.password, 8)
     }
     next()

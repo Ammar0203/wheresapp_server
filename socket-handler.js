@@ -11,6 +11,8 @@ io.on('connection', socket => {
   onSocketConnected(socket)
   socket.on('message', (data) => onMessage(socket, data))
   socket.on('disconnect', () => onSocketDisconnected(socket))
+  socket.on('typing', receiver => onTyping(socket, receiver))
+  socket.on('seen', sender => onSeen(socket, sender))
 })
 
 async function onSocketConnected(socket) {
@@ -44,8 +46,17 @@ async function onMessage(socket, data) {
     sender: sender, receiver: receiver, content: data.content, date: new Date().getTime()
   }
   await Message.create(message)
-  console.log(receiver, sender)
   io.to(sender).to(receiver).emit('message', message)
+}
+
+async function onSeen(socket, sender) {
+  let receiver = socket.user.id
+  await Message.updateMany({sender, receiver, seen: false}, {seen: true}, {multi: true})
+}
+
+function onTyping(socket, receiver) {
+  let sender = socket.user.id
+  io.to(receiver).emit('typing', sender)
 }
 
 const getMessages = async userId => {

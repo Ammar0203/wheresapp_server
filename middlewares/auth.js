@@ -19,3 +19,15 @@ exports.socket = (socket, next) => {
     .catch(next)
   })
 }
+
+exports.authenticated  = (req, res, next) => {
+let token = req.headers['authorization'];
+jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if(err) return res.status(401).json({message: 'auth error 1'})
+    User.findById(decoded.id).then(user => {
+        if(!user) return res.status(401).json({message: 'auth error 2'})
+        req.user = user;
+        next();
+    }).catch(next);
+});
+};
