@@ -9,7 +9,7 @@ exports.socket = (socket, next) => {
 
   jwt.verify(socket.handshake.query.token, process.env.JWT_SECRET, (err, decoded) => {
     if(err) return next(createError(401, 'auth_error'))
-    User.findById(decoded.id)
+    User.findById(decoded.id).select('-password')
     .then(user => {
       if(!user) return next(createError(401, 'auth_error'))
 

@@ -13,7 +13,12 @@ io.on('connection', socket => {
   socket.on('disconnect', () => onSocketDisconnected(socket))
   socket.on('typing', receiver => onTyping(socket, receiver))
   socket.on('seen', sender => onSeen(socket, sender))
+  socket.on('update_user', updateUser)
 })
+
+function updateUser(user) {
+  io.emit('update_user', user)
+}
 
 async function onSocketConnected(socket) {
   socket.join(socket.user.id)
@@ -82,7 +87,7 @@ const initialData = socket => {
     return getUsers(user.id)
   })
   .then(contacts => {
-    socket.emit('data', user, contacts, messages)
+    socket.emit('data', {user, contacts, messages})
   })
   .catch(() => socket.disconnect())
 }

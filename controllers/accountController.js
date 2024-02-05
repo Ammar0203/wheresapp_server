@@ -1,20 +1,21 @@
 const createError = require('http-errors');
 
-exports.profile = (req, res, next) => {
+exports.profile = async (req, res, next) => {
     const user = req.user;
     user.name = req.body.name;
     user.about = req.body.about;
     user.avatar = req.file ? req.file.filename : user.avatar;
-    user.save()
-    .then(updated => {
-        sendUpdateUser(updated);
-        res.json();
-    })
-    .catch(next);
+    try {
+        await user.save()
+        await sendUpdateUser(user)
+        res.json()
+    } catch (error) {
+        console.log(error);
+    }
  };
 
-const sendUpdateUser = (user) => {
-    io.emit('update_user', user.getData());
+const sendUpdateUser = async (user) => {
+    io.emit('update_user', await user.getData());
 };
 
 exports.password = (req, res, next) => {

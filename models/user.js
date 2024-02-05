@@ -52,7 +52,7 @@ ModelSchema.methods.getData = function() {
         name: this.name,
         username: this.username,
         about: this.about,
-        avatar: this.avater,
+        avatar: this.avatar,
         status: this.status
     }
 }
